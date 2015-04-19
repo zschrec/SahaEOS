@@ -50,8 +50,8 @@ Module SahaHydrogenDeclarations
     REAL (KIND=ikind),DIMENSION(elements) :: v_e
     !hydrogen ionization constants
     REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h = (/ 13.5984 /)
-    REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h_cgs = (/ 1.6022e-12 /)
-    REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h_kg = (/ 1.6022e-19 /)
+    REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h_cgs = (/ 2.1787e-11 /)
+    REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h_kg = (/ 2.1787e-18 /)
     REAL (KIND=ikind), DIMENSION(2), PARAMETER :: B_h = (/ 10.0**0.3, 10.0**0.0 /)
     !iteration variables
     REAL (KIND=ikind) :: N_e, N_e1
@@ -71,24 +71,20 @@ CONTAINS
       FUNCTION Pressure(ion_frac,T)
         REAL(KIND=ikind) :: Pressure, ion_frac 
         INTEGER  :: T
-        !Pressure=(1+ion_frac)*(k_cgs/A_cgs(1))*rho_cgs*T
-        Pressure=(1+ion_frac)*(k_kg/A_kg(1))*rho*T
+        Pressure=(1+ion_frac)*(k_cgs/A_cgs(1))*rho_cgs*T
       END FUNCTION Pressure
 
       FUNCTION InternalEnergy(ion_frac,T)
         REAL(KIND=ikind) :: InternalEnergy, ion_frac 
         INTEGER  :: T
-        !InternalEnergy=1.5*Pressure(ion_frac,T)+ion_frac*(X_h_cgs(1)/A_cgs(1))*rho_cgs
-        InternalEnergy=1.5*Pressure(ion_frac,T)+ion_frac*(X_h_kg(1)/A_kg(1))*rho
+        InternalEnergy=1.5*Pressure(ion_frac,T)+ion_frac*(X_h_cgs(1)/A_cgs(1))*rho_cgs
       END FUNCTION InternalEnergy
 
       FUNCTION SpecificHeatConstantVolume(ion_frac,T)
         REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac
         INTEGER  :: T
-        !SpecificHeatConstantVolume=(k_cgs/A_cgs(1))*(1.5*(1+ion_frac) + &
-        !      (1.5+ (X_h_cgs(1)/(k_cgs*T)))**2.0*((ion_frac*(1-ion_frac))/(2-ion_frac)))
-        SpecificHeatConstantVolume=(k_kg/A_kg(1))*(1.5*(1+ion_frac) + &
-              (1.5+ (X_h_kg(1)/(k_kg*T)))**2.0*((ion_frac*(1-ion_frac))/(2-ion_frac)))
+        SpecificHeatConstantVolume=(k_cgs/A_cgs(1))*(1.5*(1.0+ion_frac) + &
+              ((1.5+ (X_h_cgs(1)/(k_cgs*T)))**2.0)*((ion_frac*(1.0-ion_frac))/(2.0-ion_frac)))
       END FUNCTION SpecificHeatConstantVolume
 
 
