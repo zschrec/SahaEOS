@@ -13,6 +13,8 @@ Module SahaHydrogenDeclarations
     INTEGER, PARAMETER :: elements=1
     !temperature to iterate over
     INTEGER  :: T
+    !kg/m^3 - density to iterate over
+    REAL(KIND=ikind) :: rho_iter
     !*************************************
     !Physical Constants - Begin
     !*************************************
@@ -24,6 +26,10 @@ Module SahaHydrogenDeclarations
     REAL (KIND=ikind), PARAMETER :: h_cgs = 6.62606957e-27
     !kg/m^3 - density
     REAL(KIND=ikind), PARAMETER :: rho = 1.0e-3
+    REAL(KIND=ikind), PARAMETER :: rho_start = 1.0e-5
+    REAL(KIND=ikind), PARAMETER :: rho_end = 1.0e-1
+    !orders of magnitude
+    REAL(KIND=ikind), PARAMETER :: rho_inc = 1
     !g/cm^3 - density
     REAL(KIND=ikind), PARAMETER :: rho_cgs = rho*1.0e-3
     !m^2 kg s^-2 K^-1 - boltzmann's constant
