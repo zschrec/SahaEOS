@@ -13,8 +13,8 @@ Module SahaHydrogenDeclarations
     INTEGER, PARAMETER :: elements=1
     !temperature to iterate over
     INTEGER  :: T
-    !kg/m^3 - density to iterate over
-    REAL(KIND=ikind) :: rho_iter
+    INTEGER  :: T_iter
+    !*************************************
     !*************************************
     !Physical Constants - Begin
     !*************************************
@@ -26,10 +26,7 @@ Module SahaHydrogenDeclarations
     REAL (KIND=ikind), PARAMETER :: h_cgs = 6.62606957e-27
     !kg/m^3 - density
     REAL(KIND=ikind), PARAMETER :: rho = 1.0e-3
-    REAL(KIND=ikind), PARAMETER :: rho_start = 1.0e-5
-    REAL(KIND=ikind), PARAMETER :: rho_end = 1.0e-1
-    !orders of magnitude
-    REAL(KIND=ikind), PARAMETER :: rho_inc = 1
+    INTEGER :: rho_iter 
     !g/cm^3 - density
     REAL(KIND=ikind), PARAMETER :: rho_cgs = rho*1.0e-3
     !m^2 kg s^-2 K^-1 - boltzmann's constant
@@ -65,6 +62,16 @@ Module SahaHydrogenDeclarations
     INTEGER (KIND=ikind), PARAMETER :: lower_T  = 100
     INTEGER (KIND=ikind), PARAMETER :: upper_T  = 20000
     INTEGER (KIND=ikind), PARAMETER :: increment_T  = 100
+    !number of densities
+    INTEGER, PARAMETER :: num_rho = 5
+    !array of densities
+    REAL(KIND=ikind),DIMENSION(num_rho),PARAMETER :: rhos=(/ 1.0e-5,1.0e-4,1.0e-3,1.0e-2,1.0e-1 /) 
+    !number of temperatures
+    INTEGER, PARAMETER :: num_temps = (upper_T - lower_T)/increment_T 
+    !array of temperatures
+    INTEGER, DIMENSION(num_temps) :: temps 
+    !array of internal energies
+    REAL(KIND=ikind), DIMENSION(num_temps, num_rho) :: internal_energies 
     !record variables
     REAL (KIND=ikind) :: N_e_initial, N_e_last
     !ionization degree - hydrogen
@@ -81,10 +88,23 @@ CONTAINS
       END FUNCTION Pressure
 
       FUNCTION InternalEnergy(ion_frac,T)
-        REAL(KIND=ikind) :: InternalEnergy, ion_frac 
+        REAL(KIND=ikind) :: InternalEnergy, ion_frac
         INTEGER  :: T
         InternalEnergy=1.5*Pressure(ion_frac,T)+ion_frac*(X_h_cgs(1)/A_cgs(1))*rho_cgs
       END FUNCTION InternalEnergy
+
+      FUNCTION Pressure_RHO(ion_frac,T,current_rho_cgs)
+        REAL(KIND=ikind) :: Pressure_RHO, ion_frac,current_rho_cgs 
+        INTEGER  :: T
+        Pressure_RHO=(1+ion_frac)*(k_cgs/A_cgs(1))*current_rho_cgs*T
+      END FUNCTION Pressure_RHO
+
+      FUNCTION InternalEnergy_RHO(ion_frac,T,current_rho_cgs)
+        REAL(KIND=ikind) :: InternalEnergy_RHO, ion_frac, current_rho_cgs
+        INTEGER  :: T
+        InternalEnergy_RHO=1.5*Pressure_RHO(ion_frac,T,current_rho_cgs)+ &
+              ion_frac*(X_h_cgs(1)/A_cgs(1))*current_rho_cgs
+      END FUNCTION InternalEnergy_RHO
 
       FUNCTION SpecificHeatConstantVolume(ion_frac,T)
         REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac
