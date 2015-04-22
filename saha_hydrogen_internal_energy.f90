@@ -55,7 +55,7 @@ PROGRAM saha_hydrogen_internal_energy
 
             !internal_energies(T_iter,rho_iter) = ratio_h(1) / (ratio_h(1) + 1.0)
             internal_energies(T_iter,rho_iter) = &
-                InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0d20,rhos(rho_iter)*1.0e-3)
+                InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0,rhos(rho_iter)*1.0e-3)
 
 
             !IF (T == upper_T) THEN 

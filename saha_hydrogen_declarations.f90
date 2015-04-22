@@ -133,7 +133,7 @@ CONTAINS
                 m = (increment_T*1.0)/ &
                     (internal_energies(T_iter,rho_iter)-internal_energies(T_iter-1,rho_iter))
                
-                PRINT *,internal_energies(T_iter,rho_iter)
+                !PRINT *,internal_energies(T_iter,rho_iter)
 
                 GetTemperatureInternalEnergy= &
                     m*(internal_energy-internal_energies(T_iter,rho_iter))+T
