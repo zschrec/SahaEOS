@@ -12,7 +12,8 @@ Module SahaHydrogenDeclarations
     !number of elements to consider
     INTEGER, PARAMETER :: elements=1
     !temperature to iterate over
-    INTEGER  :: T
+    INTEGER (KIND=selected_INT_KIND(20))  :: T
+    REAL (KIND=ikind) :: T_real
     INTEGER  :: T_iter
     !*************************************
     !*************************************
@@ -26,6 +27,8 @@ Module SahaHydrogenDeclarations
     REAL (KIND=ikind), PARAMETER :: h_cgs = 6.62606957e-27
     !kg/m^3 - density
     REAL(KIND=ikind), PARAMETER :: rho = 1.0e-3
+    REAL(KIND=ikind) :: rho_enter
+    REAL(KIND=ikind) :: internal_energy_enter
     INTEGER :: rho_iter 
     !g/cm^3 - density
     REAL(KIND=ikind), PARAMETER :: rho_cgs = rho*1.0e-3
@@ -57,7 +60,8 @@ Module SahaHydrogenDeclarations
     REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h_kg = (/ 2.1787e-18 /)
     REAL (KIND=ikind), DIMENSION(2), PARAMETER :: B_h = (/ 10.0**0.3, 10.0**0.0 /)
     !iteration variables
-    REAL (KIND=ikind) :: N_e, N_e1
+    REAL (KIND=ikind) :: N_e = 1e20
+    REAL (KIND=ikind) :: N_e1 = 0
     REAL (KIND=ikind), PARAMETER :: tol  = 1.0e-6
     INTEGER (KIND=ikind), PARAMETER :: lower_T  = 100
     INTEGER (KIND=ikind), PARAMETER :: upper_T  = 20000
@@ -67,7 +71,7 @@ Module SahaHydrogenDeclarations
     !array of densities
     REAL(KIND=ikind),DIMENSION(num_rho),PARAMETER :: rhos=(/ 1.0e-5,1.0e-4,1.0e-3,1.0e-2,1.0e-1 /) 
     !number of temperatures
-    INTEGER, PARAMETER :: num_temps = (upper_T - lower_T)/increment_T 
+    INTEGER, PARAMETER :: num_temps = (upper_T - lower_T)/increment_T + 1
     !array of temperatures
     INTEGER, DIMENSION(num_temps) :: temps 
     !array of internal energies
@@ -94,24 +98,57 @@ CONTAINS
       END FUNCTION InternalEnergy
 
       FUNCTION Pressure_RHO(ion_frac,T,current_rho_cgs)
-        REAL(KIND=ikind) :: Pressure_RHO, ion_frac,current_rho_cgs 
-        INTEGER  :: T
+        REAL(KIND=ikind) :: Pressure_RHO, ion_frac,current_rho_cgs, T
+        !INTEGER  :: T
         Pressure_RHO=(1+ion_frac)*(k_cgs/A_cgs(1))*current_rho_cgs*T
       END FUNCTION Pressure_RHO
 
       FUNCTION InternalEnergy_RHO(ion_frac,T,current_rho_cgs)
-        REAL(KIND=ikind) :: InternalEnergy_RHO, ion_frac, current_rho_cgs
-        INTEGER  :: T
+        REAL(KIND=ikind) :: InternalEnergy_RHO, ion_frac, current_rho_cgs, T
+        !INTEGER  :: T
         InternalEnergy_RHO=1.5*Pressure_RHO(ion_frac,T,current_rho_cgs)+ &
               ion_frac*(X_h_cgs(1)/A_cgs(1))*current_rho_cgs
       END FUNCTION InternalEnergy_RHO
 
       FUNCTION SpecificHeatConstantVolume(ion_frac,T)
-        REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac
-        INTEGER  :: T
+        REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac, T
+        !INTEGER  :: T
         SpecificHeatConstantVolume=(k_cgs/A_cgs(1))*(1.5*(1.0+ion_frac) + &
               ((1.5+ (X_h_cgs(1)/(k_cgs*T)))**2.0)*((ion_frac*(1.0-ion_frac))/(2.0-ion_frac)))
       END FUNCTION SpecificHeatConstantVolume
+
+      FUNCTION GetTemperatureInternalEnergy(internal_energies, rho, internal_energy)
+        REAL(KIND=ikind) :: GetTemperatureInternalEnergy, internal_energy, rho, m
+        REAL(KIND=ikind), DIMENSION(num_temps, num_rho) :: internal_energies 
+        
+        DO rho_iter = 1, num_rho
+
+
+          IF ( ABS(rho - rhos(rho_iter)*1.0e-3)/rho < tol) THEN
+
+            T_iter=1
+            DO T = lower_T, upper_T, increment_T
+              
+              IF (internal_energies(T_iter,rho_iter) > internal_energy) THEN
+                m = (increment_T*1.0)/ &
+                    (internal_energies(T_iter,rho_iter)-internal_energies(T_iter-1,rho_iter))
+               
+                PRINT *,internal_energies(T_iter,rho_iter)
+
+                GetTemperatureInternalEnergy= &
+                    m*(internal_energy-internal_energies(T_iter,rho_iter))+T
+
+                RETURN 
+              
+              END IF 
+
+              T_iter = T_iter+1
+            END DO
+          END IF
+
+        END DO
+
+      END FUNCTION GetTemperatureInternalEnergy
 
 
 END Module SahaHydrogenDeclarations
