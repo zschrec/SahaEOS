@@ -15,7 +15,7 @@ PROGRAM saha_hydrogen_internal_energy
  
     OPEN(10, FILE='hydrogen_internal_energy.dat')
 
-    WRITE(10,*) 'T', ' ', (rhos(rho_iter)*1.0e-3, rho_iter=1,num_rho)
+    WRITE(10,*) 'T', ' ', (rhos(rho_iter), rho_iter=1,num_rho)
     
 
     DO rho_iter = 1, num_rho 
