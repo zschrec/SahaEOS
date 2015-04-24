@@ -70,27 +70,27 @@ PROGRAM saha_hydrogen_internal_energy
 
 !    PRINT *, T, ' ',internal_energies(200,1)
     
-!    T_iter = 1
-!    DO T = lower_T, upper_T, increment_T
+    T_iter = 1
+    DO T = lower_T, upper_T, increment_T
         !IF (T == upper_T) THEN 
         !  PRINT *, T, ' ',internal_energies(T_iter,rho_iter)
         !END IF
         !WRITE(10,*) T, ' ', (internal_energies(T_iter,rho_iter), rho_iter=1,num_rho) 
         !T_iter=T_iter+1
-!      WRITE(10, "(I5, $)") T
-!      DO rho_iter=1,num_rho
+      WRITE(10, "(I5, $)") T
+      DO rho_iter=1,num_rho
       
         !PRINT *, T_iter, ' ', rho_iter
 !        IF (T == upper_T) THEN 
 !          PRINT *, T, ' ',internal_energies(T_iter,rho_iter)
 !        END IF
-!        WRITE(10, "(A, F100.30,$)"), ' ', internal_energies(T_iter,rho_iter)
-!      END DO
-!      WRITE(10,*) ' '
+        WRITE(10, "(A, F100.30,$)"), ' ', internal_energies(T_iter,rho_iter)
+      END DO
+      WRITE(10,*) ' '
             
       
-!      T_iter=T_iter+1
-!    END DO
+      T_iter=T_iter+1
+    END DO
 
   
     PRINT *,'Enter density '
