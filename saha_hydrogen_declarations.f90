@@ -15,20 +15,23 @@ Module SahaHydrogenDeclarations
     INTEGER (KIND=selected_INT_KIND(20))  :: T
     REAL (KIND=ikind) :: T_real
     INTEGER  :: T_iter
+    INTEGER :: rho_index
     !*************************************
     !*************************************
     !Physical Constants - Begin
     !*************************************
     !kg - mass of electron
     REAL(KIND=ikind), PARAMETER :: m_e_mks = 9.10938291e-31
+    !g - mass of electron
+    REAL(KIND=ikind), PARAMETER :: m_e = 9.10938291e-28
     ! m^2 kg s^-1 - planck's constant
     REAL (KIND=ikind), PARAMETER :: h_mks = 6.62606957e-34
     ! cm^2 g s^-1 - planck's constant
     REAL (KIND=ikind), PARAMETER :: h = 6.62606957e-27
     !g/cm^3 - density
-    REAL(KIND=ikind), PARAMETER :: rho = 1.0e-6
-    !kg/m^3 - density
-    REAL(KIND=ikind), PARAMETER :: rho_mks = rho*1.0e3
+    REAL(KIND=ikind), PARAMETER :: rho = 1.0e-3
+!    !kg/m^3 - density
+!    REAL(KIND=ikind), PARAMETER :: rho_mks = rho*1.0e3
     REAL(KIND=ikind) :: rho_enter
     REAL(KIND=ikind) :: internal_energy_enter
     INTEGER :: rho_iter 
@@ -43,7 +46,8 @@ Module SahaHydrogenDeclarations
     !pi
     REAL(KIND=ikind), PARAMETER :: pi = 4.0*atan(1.0)
     !constant in ratio calculation
-    REAL (KIND=ikind), PARAMETER :: const = ((2*pi*m_e_mks*k_mks)/(h_mks**2))**(3.0/2.0)
+    REAL (KIND=ikind), PARAMETER :: const_mks = ((2*pi*m_e_mks*k_mks)/(h_mks**2))**(3.0/2.0)
+    REAL (KIND=ikind), PARAMETER :: const = ((2*pi*m_e*k)/(h**2))**(3.0/2.0)
     !*************************************
     !Physical Constants - End 
     !*************************************
@@ -73,10 +77,15 @@ Module SahaHydrogenDeclarations
     INTEGER (KIND=ikind), PARAMETER :: lower_T  = 100
     INTEGER (KIND=ikind), PARAMETER :: upper_T  = 20000
     INTEGER (KIND=ikind), PARAMETER :: increment_T  = 100
-    !number of densities
-    INTEGER, PARAMETER :: num_rho = 5
-    !array of densities
-    REAL(KIND=ikind),DIMENSION(num_rho),PARAMETER :: rhos=(/ 1.0e-8,1.0e-7,1.0e-6,1.0e-5,1.0e-4 /) 
+    !!number of densities
+    !INTEGER, PARAMETER :: num_rho = 5
+    !!array of densities
+    !REAL(KIND=ikind),DIMENSION(num_rho),PARAMETER::rhos=(/ 1.0e-8,1.0e-7,1.0e-6,1.0e-5,1.0e-4 /)
+    ! orders of magnitude
+    INTEGER(KIND=ikind),PARAMETER :: lower_rho = -12 ! 1.0e-8 
+    INTEGER(KIND=ikind),PARAMETER :: upper_rho = -6 ! 1.0e-1
+    INTEGER(KIND=ikind),PARAMETER :: increment_rho = 1 ! rho = rho*10^1
+    INTEGER, PARAMETER :: num_rho = (upper_rho - lower_rho)/increment_rho + 1
     !number of temperatures
     INTEGER, PARAMETER :: num_temps = (upper_T - lower_T)/increment_T + 1
     !array of temperatures
@@ -119,7 +128,6 @@ CONTAINS
 
       FUNCTION SpecificHeatConstantVolume(ion_frac,T)
         REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac, T
-        !INTEGER  :: T
         SpecificHeatConstantVolume=(k/m_h(1))*(1.5*(1.0+ion_frac) + &
               ((1.5+ (X_h(1)/(k*T)))**2.0)*((ion_frac*(1.0-ion_frac))/(2.0-ion_frac)))
       END FUNCTION SpecificHeatConstantVolume
@@ -129,37 +137,39 @@ CONTAINS
         REAL(KIND=ikind), DIMENSION(num_temps, num_rho) :: internal_energies 
         REAL(KIND=ikind) :: approx_rho, approx_T, approx_Ug, offset
         
-        DO rho_iter = 1, num_rho
+        rho_index = 1
+
+        DO rho_iter = lower_rho, upper_rho, increment_rho
 
 
-          IF ( rhos(rho_iter) > rho) THEN
+          IF ( 10**rho_iter > rho) THEN
 
             T_iter=1
             DO T = lower_T, upper_T, increment_T
               
-              IF (internal_energies(T_iter,rho_iter) > internal_energy) THEN
+              IF (internal_energies(T_iter,rho_index) > internal_energy) THEN
 
-                PRINT *,'RHO', rho, rhos(rho_iter), rho_iter
+                PRINT *,'RHO', rho, 10.0**rho_iter, rho_index
                 PRINT *,'T', T
 
                 approx_rho = (-1.0*increment_T)*&
-                    (internal_energies(T_iter,rho_iter)-internal_energies(T_iter,rho_iter-1))
+                    (internal_energies(T_iter,rho_index)-internal_energies(T_iter,rho_index-1))
 
                 !approx_T = (rhos(rho_iter) - rhos(rho_iter-1))*&
                 !    (internal_energies(T_iter,rho_iter-1)-internal_energies(T_iter,rho_iter))
 
-                approx_T = LOG(rhos(rho_iter) - rhos(rho_iter-1))*&
-                    (internal_energies(T_iter,rho_iter-1)-internal_energies(T_iter,rho_iter))
+                approx_T = (1.0*increment_rho)*&
+                    (internal_energies(T_iter,rho_index-1)-internal_energies(T_iter,rho_index))
 
                 !approx_Ug = (increment_T*1.0)*(rhos(rho_iter) - rhos(rho_iter-1))
 
-                approx_Ug = (increment_T*1.0)*LOG(rhos(rho_iter) - rhos(rho_iter-1))
+                approx_Ug = (increment_T*1.0)*(1.0*increment_rho)
 
                 !offset = -1.0* &
                 !    (approx_rho*rhos(rho_iter)+approx_T*T+approx_Ug*internal_energies(T_iter,rho_iter))
 
                 offset = -1.0* &
-                    (approx_rho*LOG(rhos(rho_iter))+approx_T*T+approx_Ug*internal_energies(T_iter,rho_iter))
+                  (approx_rho*rho_iter+approx_T*T+approx_Ug*internal_energies(T_iter,rho_index))
 
                 !GetTemperatureInternalEnergy= -1.0*&
                 !    (offset+approx_rho*rho+approx_Ug*internal_energy)/approx_T
@@ -174,6 +184,8 @@ CONTAINS
               T_iter = T_iter+1
             END DO
           END IF
+          
+          rho_index = rho_index+1
 
         END DO
 

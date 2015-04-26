@@ -15,10 +15,10 @@ PROGRAM saha_hydrogen_internal_energy
  
     OPEN(10, FILE='hydrogen_internal_energy.dat')
 
-    WRITE(10,*) 'T', ' ', (rhos(rho_iter), rho_iter=1,num_rho)
-    
+    WRITE(10,*) 'T', ' ', (10.0**rho_iter, rho_iter=lower_rho,upper_rho,increment_rho)
 
-    DO rho_iter = 1, num_rho 
+    rho_index = 1
+    DO rho_iter = lower_rho, upper_rho, increment_rho 
         
         T_iter = 1
 
@@ -31,13 +31,13 @@ PROGRAM saha_hydrogen_internal_energy
           
             DO 
                 ratio_h(1) = const * (T)**(3.0/2.0) * & 
-                    (2.0 * B_h(2) * exp(-X_h(1)/(k_eV*T))) / (B_h(1) * N_e)
+                    (2.0 * B_h(2) * exp(-X_h_eV(1)/(k_eV*T))) / (B_h(1) * N_e)
         
                 y_h(1) = ratio_h(1) / (ratio_h(1) + 1.0)
         
                 v_e(1) = 1.0*y_h(1)
         
-                N_e1 =  ((rhos(rho_iter)*N_o) * (x(1)/A(1)) * v_e(1))
+                N_e1 =  (10.0**rho_iter*N_o) * (x(1)/A(1)) * v_e(1)
         
                 IF (abs((N_e - N_e1)/N_e) < tol) exit
         
@@ -53,9 +53,16 @@ PROGRAM saha_hydrogen_internal_energy
 
             !PRINT *, T_iter, ' ', rho_iter
 
-            !internal_energies(T_iter,rho_iter) = ratio_h(1) / (ratio_h(1) + 1.0)
-            internal_energies(T_iter,rho_iter) = &
-                InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0,rhos(rho_iter)*1.0e-3)
+            !internal_energies(T_iter,rho_index) = ratio_h(1) / (ratio_h(1) + 1.0)
+            
+            !internal_energies(T_iter,rho_index) = &
+            !  Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0, 10.0**rho_iter)
+            
+            !internal_energies(T_iter,rho_index) = &
+            !  SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0)
+            
+            internal_energies(T_iter,rho_index) = &
+                InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0,10.0**rho_iter)
 
 
             !IF (T == upper_T) THEN 
@@ -65,7 +72,8 @@ PROGRAM saha_hydrogen_internal_energy
             T_iter = T_iter+1
 
         END DO
-    
+   
+        rho_index = rho_index+1
     END DO
 
 !    PRINT *, T, ' ',internal_energies(200,1)
@@ -77,7 +85,7 @@ PROGRAM saha_hydrogen_internal_energy
         !END IF
         !WRITE(10,*) T, ' ', (internal_energies(T_iter,rho_iter), rho_iter=1,num_rho) 
         !T_iter=T_iter+1
-      WRITE(10, "(I5, $)") T
+      WRITE(10, "(I6, $)") T
       DO rho_iter=1,num_rho
       
         !PRINT *, T_iter, ' ', rho_iter
@@ -93,15 +101,15 @@ PROGRAM saha_hydrogen_internal_energy
     END DO
 
   
-    PRINT *,'Enter density '
-    READ *, rho_enter
-    PRINT *,'Enter internal energy'
-    READ *, internal_energy_enter
+ !   PRINT *,'Enter density '
+ !   READ *, rho_enter
+ !   PRINT *,'Enter internal energy'
+ !   READ *, internal_energy_enter
 
-    T_real = GetTemperatureInternalEnergy(internal_energies,rho_enter*1.0e-3,internal_energy_enter)
+ !   T_real = GetTemperatureInternalEnergy(internal_energies,rho_enter,internal_energy_enter)
 
-    PRINT *, T_real, Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real, rho_enter*1.0e-3), &
-          SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T_real)
+ !   PRINT *, T_real, Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real, rho_enter), &
+ !         SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T_real)
 
 !    WRITE(10,*) T, ' ', ratio_h(1) / (ratio_h(1) + 1.0) !, &
 !                   ' ', Pressure(ratio_h(1) / (ratio_h(1) + 1.0),T), &
