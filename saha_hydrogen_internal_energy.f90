@@ -100,17 +100,62 @@ PROGRAM saha_hydrogen_internal_energy
       T_iter=T_iter+1
     END DO
 
+    rho_enter = 1
+    DO WHILE (rho_enter > 0)
   
- !   PRINT *,'Enter density '
- !   READ *, rho_enter
- !   PRINT *,'Enter internal energy'
- !   READ *, internal_energy_enter
+      PRINT *,'Enter density '
+      READ *, rho_enter
+      PRINT *,'Enter internal energy'
+      READ *, internal_energy_enter
+  
+      T_real = GetTemperatureInternalEnergy(internal_energies,rho_enter,internal_energy_enter)
+  
+      PRINT *, T_real, Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real, rho_enter), &
+            SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T_real)
 
- !   T_real = GetTemperatureInternalEnergy(internal_energies,rho_enter,internal_energy_enter)
+      N_e = N_e_initial
+      N_e_last = N_e_initial
+      N_e1 = 0
+          
+      DO 
+        ratio_h(1) = const * (T_real)**(3.0/2.0) * & 
+          (2.0 * B_h(2) * exp(-X_h_eV(1)/(k_eV*T_real))) / (B_h(1) * N_e)
+        
+        y_h(1) = ratio_h(1) / (ratio_h(1) + 1.0)
+        
+        v_e(1) = 1.0*y_h(1)
+        
+        N_e1 =  (rho_enter*N_o) * (x(1)/A(1)) * v_e(1)
+        
+        IF (abs((N_e - N_e1)/N_e) < tol) exit
+        
+          IF(abs((N_e_last - N_e1)/N_e_last) > 1e-3) then 
+            N_e_last = N_e
+            N_e = N_e1
+          ELSE 
+            N_e_last = N_e
+            N_e = (N_e + N_e1) / 2.0
+          END IF
+                
+      END DO
 
- !   PRINT *, T_real, Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real, rho_enter), &
- !         SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T_real)
+      !PRINT *, T_iter, ' ', rho_iter
 
+      !internal_energies(T_iter,rho_index) = ratio_h(1) / (ratio_h(1) + 1.0)
+            
+      !internal_energies(T_iter,rho_index) = &
+      !  Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0, 10.0**rho_iter)
+            
+      !internal_energies(T_iter,rho_index) = &
+      !  SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0)
+            
+      PRINT *, InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter), ' ', &
+          ABS(InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter) - &
+              internal_energy_enter)/(internal_energy_enter*1.0) * 100
+
+
+
+    END DO
 !    WRITE(10,*) T, ' ', ratio_h(1) / (ratio_h(1) + 1.0) !, &
 !                   ' ', Pressure(ratio_h(1) / (ratio_h(1) + 1.0),T), &
 !                   ' ', InternalEnergy(ratio_h(1) / (ratio_h(1) + 1.0),T), &
