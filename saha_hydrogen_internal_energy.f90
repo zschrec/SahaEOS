@@ -16,18 +16,18 @@ PROGRAM saha_hydrogen_internal_energy
     OPEN(10, FILE='hydrogen_internal_energy.dat')
 
     !WRITE(10,*) 'T', ' ', (10.0**rho_iter, rho_iter=lower_rho,upper_rho,increment_rho)
-    WRITE(10, "(A, $)") 'T'
+    WRITE(10, "(A, A, $)"), ' ', 'T'
     rho_iter = 1.0*lower_rho
     DO rho_index=1,num_rho
       WRITE(10, "(A, F100.30,$)"), ' ', 10.0**rho_iter
       rho_iter=rho_iter+increment_rho
     END DO
-    WRITE(10,*) ' '
+    WRITE(10,*), ' '
 
     rho_index = 1
     rho_iter = 1.0*lower_rho
-    DO WHILE (rho_iter <= upper_rho)
-      PRINT *,rho_iter
+    DO WHILE (rho_iter < (upper_rho+increment_rho))
+      !PRINT *,rho_iter
         
         T_iter = 1
 
@@ -95,17 +95,17 @@ PROGRAM saha_hydrogen_internal_energy
         !END IF
         !WRITE(10,*) T, ' ', (internal_energies(T_iter,rho_iter), rho_iter=1,num_rho) 
         !T_iter=T_iter+1
-      WRITE(10, "(I6, $)") T
-      DO rho_index=1,num_rho
+      WRITE(10, "(I6, $)"), T
+        
       
-        !PRINT *, T_iter, ' ', rho_iter
-!        IF (T == upper_T) THEN 
-!          PRINT *, T, ' ',internal_energies(T_iter,rho_iter)
-!        END IF
+      DO rho_index=1,num_rho,1
         WRITE(10, "(A, F100.30,$)"), ' ', internal_energies(T_iter,rho_index)
       END DO
-      WRITE(10,*) ' '
-            
+      
+      
+      WRITE(10,*), ' '
+           
+      FLUSH(10)
       
       T_iter=T_iter+1
     END DO
@@ -166,6 +166,8 @@ PROGRAM saha_hydrogen_internal_energy
 
 
     END DO
+
+    CLOSE(10)
 !    WRITE(10,*) T, ' ', ratio_h(1) / (ratio_h(1) + 1.0) !, &
 !                   ' ', Pressure(ratio_h(1) / (ratio_h(1) + 1.0),T), &
 !                   ' ', InternalEnergy(ratio_h(1) / (ratio_h(1) + 1.0),T), &
