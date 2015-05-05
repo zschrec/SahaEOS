@@ -48,6 +48,9 @@ PROGRAM saha_hydrogen
         
         END DO  
  
+        ratio_h(1) = const * (T)**(3.0/2.0) * & 
+          (2.0 * B_h(2) * exp(-X_h(1)/(k_eV*T))) / (B_h(1) * N_e)
+        
         WRITE(10,*) T, ' ', ratio_h(1) / (ratio_h(1) + 1.0), &
                         ' ', Pressure(ratio_h(1) / (ratio_h(1) + 1.0),T), &
                         ' ', InternalEnergy(ratio_h(1) / (ratio_h(1) + 1.0),T), &

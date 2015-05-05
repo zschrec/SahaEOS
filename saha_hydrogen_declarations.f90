@@ -140,6 +140,7 @@ CONTAINS
       FUNCTION GetTemperatureInternalEnergy(internal_energies, rho, internal_energy)
         REAL(KIND=ikind) :: GetTemperatureInternalEnergy, internal_energy, rho, m
         REAL(KIND=ikind), DIMENSION(num_temps, num_rho) :: internal_energies 
+        !REAL(KIND=ikind) :: approx_rho, approx_T, approx_Ug, offset
         REAL(KIND=ikind) :: approx_rho_1, approx_T_1, approx_Ug_1, offset_1
         REAL(KIND=ikind) :: approx_rho_2, approx_T_2, approx_Ug_2, offset_2
         
@@ -155,6 +156,10 @@ CONTAINS
               
               IF (internal_energies(T_iter,rho_index) > internal_energy) THEN
 
+                !approx_rho = (-1.0*increment_T)*&
+                !    (LOG10(internal_energies(T_iter,rho_index))- &
+                !      LOG10(internal_energies(T_iter,rho_index-1)))
+                
                 approx_rho_1 = (-1.0*increment_T)*&
                     (LOG10(internal_energies(T_iter,rho_index))- &
                       LOG10(internal_energies(T_iter,rho_index-1)))
@@ -162,6 +167,10 @@ CONTAINS
                 approx_rho_2 = (-1.0*increment_T)*&
                     (LOG10(internal_energies(T_iter-1,rho_index))- &
                       LOG10(internal_energies(T_iter-1,rho_index-1)))
+
+                !approx_T = (1.0*increment_rho)*&
+                !    (LOG10(internal_energies(T_iter,rho_index-1))- &
+                !      LOG10(internal_energies(T_iter,rho_index)))
 
                 approx_T_1 = (1.0*increment_rho)*&
                     (LOG10(internal_energies(T_iter,rho_index-1))- &
@@ -171,9 +180,16 @@ CONTAINS
                     (LOG10(internal_energies(T_iter-1,rho_index-1))- &
                       LOG10(internal_energies(T_iter,rho_index-1)))
 
+                !approx_Ug = (increment_T*1.0)*(1.0*increment_rho)
+                
                 approx_Ug_1 = (increment_T*1.0)*(1.0*increment_rho)
 
                 approx_Ug_2 = (increment_T*1.0)*(1.0*increment_rho)
+
+                !offset = -1.0* &
+                !  (approx_rho*(rho_iter-increment_rho)+approx_T* &
+                !    (T-increment_T)+approx_Ug* &
+                !    LOG10(internal_energies(T_iter-1,rho_index-1)))
 
                 offset_1 = -1.0* &
                   (approx_rho_1*(rho_iter-increment_rho)+approx_T_1* &
@@ -183,6 +199,9 @@ CONTAINS
                 offset_2 = -1.0* &
                   (approx_rho_2*rho_iter+approx_T_2*T+approx_Ug_2* &
                     LOG10(internal_energies(T_iter,rho_index)))
+
+                !GetTemperatureInternalEnergy=(-1.0*(offset+approx_rho*LOG10(rho)+approx_Ug*&
+                !  LOG10(internal_energy))/approx_T)
 
                 GetTemperatureInternalEnergy=((-1.0*(offset_1+approx_rho_1*LOG10(rho)+approx_Ug_1*&
                   LOG10(internal_energy))/approx_T_1) + &
