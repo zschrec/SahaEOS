@@ -1,2 +1,8 @@
-# SahaEOS
-Implementation of an equation of state (EOS) solver using Saha ionization. These modules form the foundation of implementing the Saha EOS in AstroBEAR. The three main modules will be described below, as well as what must be done in the future.
+﻿# SahaEOS
+This is an implementation of the Saha equation of state (EOS). These modules form the foundation of implementing the Saha EOS in AstroBEAR (https://astrobear.pas.rochester.edu/trac/). Each module consists of the main program and a declarations files containing everything the main program needs. The three main modules, as well as what must be done in the future, are be described below. The initial files folder contains the “pre-cleaned” versions of the files that are included only for the sake of completeness.
+
+#saha_solver.f90 with saha_solver_declarations.f90
+This module uses the Saha equation to iterates until electron density converges.  It does so over a range of temperatures with specified compositions of hydrogen, helium, carbon, nitrogen, and oxygen. It outputs a files containing the various ionization fractions and the ionization energy for each temperature. Due to the lack of partition function values for carbon, nitrogen, and oxygen, we only consider the zeroth, first, and second ionization levels. All units are in CGS unless the variable contains “_eV” at the end, where those units are electron-volts.
+To run the simulation with different concentrations of elements, the values in the “x” array can changed. The index-element pairs are 1-hydrogen, 2-helium, 3-carbon, 4-nitrogen, and 5-oxygen.  
+The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.
+The initial electron density to start the iteration and the tolerance of the calculation can be changed, however their current values have worked well in our simulations. 
