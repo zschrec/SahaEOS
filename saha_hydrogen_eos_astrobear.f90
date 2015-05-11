@@ -8,7 +8,7 @@ PROGRAM saha_hydrogen_eos_astrobear
     N_e_initial = N_e
     N_e_last = N_e
  
-    OPEN(10, FILE='hydrogen_internal_energy.dat')
+    OPEN(10, FILE='outfiles/saha_hydrogen_eos_astrobear.dat')
 
     WRITE(10, "(A, A, $)"), ' ', 'T'
     rho_iter = 1.0*lower_rho
@@ -87,8 +87,9 @@ PROGRAM saha_hydrogen_eos_astrobear
   
       T_real = GetTemperatureInternalEnergy(internal_energies,rho_enter,internal_energy_enter)
   
-      PRINT *, T_real, Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real, rho_enter), &
-            SpecificHeatConstantVolume(ratio_h(1) / (ratio_h(1) + 1.0), T_real)
+      PRINT *, 'Temperature: ', T_real
+      PRINT *, 'Pressure: ', Pressure_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real, rho_enter)
+      PRINT *, 'Specific Heat: ', SpecificHeatConstantVolume(ratio_h(1)/(ratio_h(1) + 1.0), T_real)
 
       N_e = N_e_initial
       N_e_last = N_e_initial
@@ -116,10 +117,21 @@ PROGRAM saha_hydrogen_eos_astrobear
                 
       END DO
 
-      PRINT *, InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter), ' ', &
-          ABS(InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter) - &
+      !PRINT *, InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter), ' ', &
+      !    ABS(InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter) - &
+      !        internal_energy_enter)/(internal_energy_enter*1.0) * 100
+
+      PRINT *, 'Internal Energy: ', &
+        InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter)
+      PRINT *, 'Percent Error: ', &
+        ABS(InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_enter) - &
               internal_energy_enter)/(internal_energy_enter*1.0) * 100
 
+      PRINT *,'Enter density '
+      READ *, rho_enter
+      PRINT *,'Enter internal energy'
+      READ *, internal_energy_enter
+  
     END DO
 
     CLOSE(10)
