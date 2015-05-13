@@ -1,0 +1,235 @@
+
+
+This file contains the steps necessary to get AstroBEAR working on a given machine.
+The assumed file structure is ~/Documents/AstroBEAR/
+Where the AstroBEAR directory will have what we need.
+
+Phase I: Obtaining the necessary files/packages
+
+	-First, obtain the updated scrambler files (scrambler is the AstroBEAR source).
+	This can be done by INSERT_DETAILS_LATER
+
+	-Next is to download everything that AstroBEAR needs to run:
+		
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
+		Intel Fortran Compiler:
+			- Download from https://software.intel.com/en-us/intel-parallel-studio-xe
+
+			- Extract files into AstroBEAR/ directory
+			
+	
+			- run	>>	mkdir intel_compiler
+					>>	./install.sh
+	
+				-  Follow Prompts: Evaluation -> custom install (uncheck IA-32, change installation directory to ../../AstroBEAR
+
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+		
+		Open MPI:
+			- Download from from http://www.open-mpi.org/software/ompi/v1.8/
+				(Used openmpi-1.8.4.tar.gz)
+
+			- Extract files into AstroBEAR/ directory
+			
+			- run	>>	cd ../../openmpi-1.8.4/
+					>>	mkdir build
+					>>	./configure --prefix=/home/USERNAME/Documents/AstroBEAR/openmpi-1.8.4/build
+					>>	make all install
+
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+		
+		HDF5:
+			- Download from http://www.hdfgroup.org/HDF5/release/obtainsrc.html
+				(Used hdf5-1.8.13.tar.gz)
+			
+			- Extract files into AstroBEAR/ directory
+					
+			- run 	>>	./configure --prefix=/home/schrecengost/Documents/AstroBEAR/hdf5-1.8.13/ --enable-fortran --enable-cxx 
+					>>	make
+					>> make install						
+	
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+		
+		Hyper:
+			- Download from https://computation-rnd.llnl.gov/linear_solvers/software.php
+				(Used hypre-2.0.0.tar.gz)
+			
+			- Extract files into AstroBEAR/ directory
+
+			- run 	>>	cd ../../hyper-2.0.0/src
+					>>	mkdir build
+					>>	export CC="gcc -lm"
+					>>	./configure --prefix=../../AstroBEAR/hypre-2.0.0/src/build/ --with-MPI-include=../../AstroBEAR/openmpi-1.8.4/build/include
+					>>	make install
+
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
+		FFTW:
+			- Download from http://www.fftw.org/download.html
+				(Used fftw-3.3.4.tar.gz)
+
+			- Extract files into AstroBEAR/ directory
+			
+			- run 	>>	cd ../../fftw.3.3.4
+					>>	./configure --prefix=/home/USERNAME/Documents/AstroBEAR/fftw-3.3.4
+					>>	make
+
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
+Phase II: Configuring Makefile
+
+	First:
+		export LD_LIBRARY_PATH=../../AstroBEAR/hdf5-1.8.13/lib/:$LD_LIBRARY_PATH
+
+	NOTE:	As you run make in "scrambler" there will be errors that relate to path dependencies in 
+			"includes". Just open up the file with the error in it and adjust the path to reflect
+			your directory structure. If you have followed the directions carefully, all I believe
+			should need to change is /home/YOURUSERNAME/Documents/
+
+ 
+	Follow directions on https://astrobear.pas.rochester.edu/trac/wiki/CompilingAstroBear 
+	to compile a problem. When typing >> make is when path errors will manifest themselves
+
+
+	Follow directions on https://astrobear.pas.rochester.edu/trac/wiki/TestAstroBear to set up
+	a run directory
+
+	MAKE SURE ../run_dir/out IS EMPTY!!!
+
+
+
+Phase III: Visualization
+
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+		
+		VisIt: 
+			- Download from https://wci.llnl.gov/simulation/computer-codes/visit/executables
+				(Used Linux - x86_64 64 bit for Redhat Enterprise)
+			
+			- Move tar into AstroBEAR directory
+
+			- run 	>>	mkdir visit
+					>>	./visit_install.sh 2.8.1 linux-x86_64-rhel6 ../../AstroBEAR/visit
+					>>	cd visit/bin
+					>> 	./visit
+			(if cannot find libpng12.so.0 -> install libpng12 as root)	
+
+			- follow instructions on https://astrobear.pas.rochester.edu/trac/wiki/VisItBasics
+
+			-  if visit gives you an error when trying to open *.hdf files, change file names to *.hdf5
+
+		/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+	
+
+
+
+
+
+MODULES:
+	1DWaves -
+
+    FillingFraction
+
+	RadShock
+
+	2DWaves - Error on run: undefined reference to ndomains
+	
+	GaussDiffusion - no global data file
+
+	RTInstability
+	
+	BasicDisk
+
+	GravitationalCascade
+
+	MolecularCloudFormation
+
+	SingleClump
+
+	Binary- Error on run: undefined reference to ndomains
+
+	GravoTurbulence- Error on run: undefined reference to ndomains
+
+	MomentumConservation
+
+	SlowMolecularCloudFormation - ran no problem, plot interesting
+
+	Bondi
+	
+	HydroStaticStar
+
+	MTI
+
+	SodShockTube
+
+	BonnorEbertSphere
+
+	HydroWaves
+
+	MultiClumps
+
+	StreamDisk
+
+	BrioWuShockTube
+
+	IsoHydroWaves - ran and plotted with no problem
+
+	MultiJets
+
+	Template
+
+	Christina_Original
+
+	IsoMHDWaves
+
+    ThermalInstability
+
+	CorotatingBinary
+
+	IsotropicTurbulence
+
+	OrbitingParticles
+
+	TrueLoveProblems
+
+	CurrentSheet
+
+	UniformCollapse - ran with no problem, no plots?
+
+	EinfeldtRarefaction
+	
+	Marquee
+
+	RadiativeInstability0
+
+	FieldLoopAdvection - ran and plotted with no problem
+
+	MHDWaves
+
+	RadiativeInstability05
+
+	FieldLoopRestart - ran and plotted with no problem
+
+	RadiativeInstability1
+
+
+	
+
+
+
+
+export CC=/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/mpicc
+export FC="/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/mpif90 -ffree-line-length-none"
+export PATH=/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/:$PATH
+
+
+./configure --with-hdf5=/home/schrecengost/Documents/AstroBEAR/hdf5-1.8.13 --with-fftw3=/home/schrecengost/Documents/AstroBEAR/fftw-3.3.4 --with-hypre=/home/schrecengost/Documents/AstroBEAR/hypre-2.0.0/src/hypre
+
+/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/mpif90 -ffree-line-length-none -c -ffree-form -ffree-line-length-none physics/saha.f90 -o physics/saha.o
+
+
+
+
+
+
