@@ -6,16 +6,17 @@ This module uses the Saha equation to iterate until electron density converges. 
 To run the iteration with different concentrations of elements, the values in the “x” array can changed. The index-element pairs are 1-hydrogen, 2-helium, 3-carbon, 4-nitrogen, and 5-oxygen.  
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
 The density of the mixture can be changed by changing the value of the variable rho.  
-The initial electron density to start the iteration and the tolerance of the calculation can be changed, however their current values have worked well in our tests. 
-_Future Goals_
+The initial electron density to start the iteration and the tolerance of the calculation can be changed, however their current values have worked well in our tests.    
+_Future Goals_    
 The main thing that should be added here is determining the partition function values for carbon, nitrogen, and oxygen. Once these values are determined, they can be fully added to the iterations. Refer to the saha_math.doc file to understand how to calculate the ionization degree using only the ratios that the Saha equation gives. 
 
 #saha_hydrogen_eos.f90 with saha_hydrogen_eos_declarations.f90
 While only considering hydrogen, this module uses the Saha equation to iterate until electron density converges. Once convergence is reached, the pressure, internal energy, and specific heat capacity are calculated and it does this over a range of temperatures. It outputs a file containing the ionization fraction, the pressure, the internal energy, and the specific heat capacity for each temperature.  
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
 The density of the mixture can be changed by changing the variable rho.  
-The initial electron density to start the iteration and the tolerance of the calculation can be changed, however their current values have worked well in our tests. 
-_Future Goals_
+The initial electron density to start the iteration and the tolerance of the calculation can be changed, however their current values have worked well in our tests.    
+_Future Goals_    
+More elements should be included in the calculations of temperature, internal energy, and specific heat. To fully add more than just helium, the future goals of saha_solver.f90 must be completed first. The equations to include additional elements also must be developed. 
 
 
 #saha_hydrogen_eos_astrobear.f90 with saha_hydrogen_eos_astrobear_declarations.f90
