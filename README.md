@@ -4,6 +4,7 @@ This is an implementation of the Saha equation of state (EOS). These modules for
 #saha_solver.f90 with saha_solver_declarations.f90
 _Overview_    
 This module uses the Saha equation to iterate until electron density converges. It does so over a range of temperatures with specified compositions of hydrogen, helium, carbon, nitrogen, and oxygen. It outputs a file containing the various ionization fractions and the ionization energy for each temperature. Due to the lack of partition function values for carbon, nitrogen, and oxygen, we only consider the zeroth, first, and second ionization levels.    
+_To compile:_ gfortran -o saha_solver saha_solver_declarations.f90 saha_solver.f90    
 _Configuration_        
 To run the iteration with different concentrations of elements, the values in the “x” array can changed. The index-element pairs are 1-hydrogen, 2-helium, 3-carbon, 4-nitrogen, and 5-oxygen.  
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
@@ -14,7 +15,8 @@ The main thing that should be added here is determining the partition function v
 
 #saha_hydrogen_eos.f90 with saha_hydrogen_eos_declarations.f90
 _Overview_    
-While only considering hydrogen, this module uses the Saha equation to iterate until electron density converges. Once convergence is reached, the pressure, internal energy, and specific heat capacity are calculated and it does this over a range of temperatures. It outputs a file containing the ionization fraction, the pressure, the internal energy, and the specific heat capacity for each temperature.     
+While only considering hydrogen, this module uses the Saha equation to iterate until electron density converges. Once convergence is reached, the pressure, internal energy, and specific heat capacity are calculated and it does this over a range of temperatures. It outputs a file containing the ionization fraction, the pressure, the internal energy, and the specific heat capacity for each temperature.    
+_To compile:_ gfortran -o saha_hydrogen_eos saha_hydrogen_eos_declarations.f90 saha_hydrogen_eos.f90     
 _Configuration_        
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
 The density of the mixture can be changed by changing the variable rho.  
@@ -25,6 +27,7 @@ More elements should be included in the calculations of temperature, internal en
 #saha_hydrogen_eos_astrobear.f90 with saha_hydrogen_eos_astrobear_declarations.f90
 _Overview_    
 This is the module that generates the tables that AstroBEAR will use. Considering only hydrogen,  the current program generates a table for a range of temperatures and densities. For each temperature-density pair, the Saha equation is used to iterate until electron density converges. Once convergence is reached, internal energy is calculated and stored in the table. Once the table is created, the user can enter a density and internal energy and the temperature is interpolated from the table. The table is generated such that the values around the edges of the table are outside our “region of interest”.        
+_To compile:_ gfortran -o saha_hydrogen_eos_astrobear saha_hydrogen_eos_astrobear_declarations.f90 saha_hydrogen_eos_astrobear.f90 -freal-4-real-16     
 _Configuration_        
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
 The upper_rho, lower_rho, and increment_rho values can be changed to iterate over different density ranges.   
