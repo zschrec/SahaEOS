@@ -1,4 +1,4 @@
-
+﻿
 
 This file contains the steps necessary to get AstroBEAR working on a given machine.
 The assumed file structure is ~/Documents/AstroBEAR/
@@ -7,7 +7,11 @@ Where the AstroBEAR directory will have what we need.
 Phase I: Obtaining the necessary files/packages
 
 	-First, obtain the updated scrambler files (scrambler is the AstroBEAR source).
-	This can be done by INSERT_DETAILS_LATER
+	This can be done by obtaining access to the AstroBEAR git repo. A user account must be obtained (Baowei). IF the version of AstroBEAR obtained needs to be set up via a configure
+
+./configure --with-hdf5=/home/schrecengost/Documents/AstroBEAR/hdf5-1.8.13 --with-fftw3=/home/schrecengost/Documents/AstroBEAR/fftw-3.3.4 --with-hypre=/home/schrecengost/Documents/AstroBEAR/hypre-2.0.0/src/hypre
+
+You must first download everything AstroBEAR needs, and THEN run configure. 
 
 	-Next is to download everything that AstroBEAR needs to run:
 		
@@ -212,24 +216,3 @@ MODULES:
 	FieldLoopRestart - ran and plotted with no problem
 
 	RadiativeInstability1
-
-
-	
-
-
-
-
-export CC=/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/mpicc
-export FC="/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/mpif90 -ffree-line-length-none"
-export PATH=/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/:$PATH
-
-
-./configure --with-hdf5=/home/schrecengost/Documents/AstroBEAR/hdf5-1.8.13 --with-fftw3=/home/schrecengost/Documents/AstroBEAR/fftw-3.3.4 --with-hypre=/home/schrecengost/Documents/AstroBEAR/hypre-2.0.0/src/hypre
-
-/home/schrecengost/Documents/AstroBEAR/openmpi-1.8.4/build/bin/mpif90 -ffree-line-length-none -c -ffree-form -ffree-line-length-none physics/saha.f90 -o physics/saha.o
-
-
-
-
-
-
