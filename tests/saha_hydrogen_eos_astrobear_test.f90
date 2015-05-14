@@ -1,9 +1,9 @@
 ! mpif90 -o saha_hydrogen_internal_energy saha_hydrogen_declarations.f90 saha_hydrogen_internal_energy.f90
 
 
-PROGRAM saha_hydrogen_internal_energy
+PROGRAM saha_hydrogen_eos_astrobear_test
 
-    USE SahaHydrogenDeclarations
+    USE SahaHydrogenEOSAstroBEARTestDeclarations
     IMPLICIT NONE
    
     REAL (KIND=ikind), DIMENSION(500, 39) :: ie_test
@@ -17,25 +17,11 @@ PROGRAM saha_hydrogen_internal_energy
     REAL :: rho_iter_test
     INTEGER :: rho_index_test
 
-!    PRINT *,(upper_rho-lower_rho)/increment_rho
-!    rho_iter = 10.0**lower_rho + (10.0**upper_rho-10.0**lower_rho)/((upper_rho-lower_rho)/increment_rho)
-!    rho_index = 2
-!    DO WHILE (rho_iter < 10.0**upper_rho) 
-!      PRINT *, rho_iter, rho_index
-!      rho_iter = rho_iter + (10.0**upper_rho-10.0**lower_rho)/((upper_rho-lower_rho)/increment_rho)
-!      rho_index = rho_index + 1
-!    
-!    END DO
-!
-!    RETURN
-
-
-
     N_e1 = 0
     N_e_initial = N_e
     N_e_last = N_e
  
-    OPEN(10, FILE='hydrogen_internal_energy_test.dat')
+    OPEN(10, FILE='outfiles/saha_hydrogen_eos_astrobear_test.dat')
 
     rho_iter_test = 10.0**lower_rho + (10.0**upper_rho-10.0**lower_rho)/((upper_rho-lower_rho)/increment_rho)
     DO WHILE (rho_iter_test < 10.0**(upper_rho-increment_rho)) 
@@ -48,7 +34,7 @@ PROGRAM saha_hydrogen_internal_energy
     rho_iter = 1.0*lower_rho
     DO WHILE (rho_iter < (upper_rho+increment_rho))
         
-        T_iter = 1
+        T_index = 1
 
         !K
         DO T = lower_T, upper_T, increment_T
@@ -79,10 +65,10 @@ PROGRAM saha_hydrogen_internal_energy
                 
             END DO
 
-            internal_energies(T_iter,rho_index) = &
+            internal_energies(T_index,rho_index) = &
                 InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T*1.0,10.0**rho_iter)
 
-            T_iter = T_iter+1
+            T_index = T_index+1
 
         END DO
             
@@ -160,8 +146,6 @@ PROGRAM saha_hydrogen_internal_energy
                 
         END DO
 
-        !ie_test(ie_iter_index, rho_index_test-1) = ie_iter
-
         ie_test(ie_iter_index, rho_index_test-1) = &
           ABS(InternalEnergy_RHO(ratio_h(1) / (ratio_h(1) + 1.0), T_real,rho_iter_test)-ie_iter)/ie_iter * 100.0
 
@@ -188,6 +172,6 @@ PROGRAM saha_hydrogen_internal_energy
 
     CLOSE(10)
 
-END PROGRAM saha_hydrogen_internal_energy
+END PROGRAM saha_hydrogen_eos_astrobear_test
 
 

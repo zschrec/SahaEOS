@@ -2,7 +2,7 @@
 !Declarations Needed For Hydrogen Saha
 !
 
-Module SahaHydrogenEOSAstroBEARDeclarations
+Module SahaHydrogenEOSAstroBEARTestDeclarations
   IMPLICIT NONE
   SAVE
   PUBLIC
@@ -187,6 +187,6 @@ CONTAINS
   END FUNCTION GetTemperatureInternalEnergy
 
 
-END Module SahaHydrogenEOSAstroBEARDeclarations
+END Module SahaHydrogenEOSAstroBEARTestDeclarations
 
 
