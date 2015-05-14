@@ -1,12 +1,12 @@
 ﻿# SahaEOS
-This is an implementation of the Saha equation of state (EOS). These modules form the foundation of implementing the Saha EOS in AstroBEAR (https://astrobear.pas.rochester.edu/trac/). The paper on the algorithms and test of AstroBEAR can be found at http://iopscience.iop.org/0067-0049/182/2/519/pdf/0067-0049_182_2_519.pdf. Each module consists of the main program and a declarations file containing everything the main program needs. The three main modules are be described below, as well as what must be done in the future. The initial files folder contains the “pre-cleaned” versions of the files that are included only for the sake of completeness. The outfiles folder contains the output files of the modules, and the tests folder contains the module used to test the table generation and temperature interpolation techniques. All units are in CGS unless the variable contains “_eV” at the end, where those variables are in electron-volts. It is highly recommended that Math_Capstone_Paper.pdf is read before trying to understand these modules.   
+This is an implementation of the Saha equation of state (EOS). These modules form the foundation of implementing the Saha EOS in AstroBEAR (https://astrobear.pas.rochester.edu/trac/). The paper on the algorithms and test of AstroBEAR can be found at http://iopscience.iop.org/0067-0049/182/2/519/pdf/0067-0049_182_2_519.pdf. Each module consists of the main program and a declarations file containing everything the main program needs. The three main modules are described below, as well as what must be done in the future. The initial files folder contains the “pre-cleaned” versions of the files that are included only for the sake of completeness. The outfiles folder contains the output files of the modules, and the tests folder contains the module used to test the table generation and temperature interpolation techniques. All units are in CGS unless the variable contains “_eV” at the end, where those variables are in electron-volts. It is highly recommended that Math_Capstone_Paper.pdf is read before trying to understand these modules.   
 
 #saha_solver.f90 with saha_solver_declarations.f90
 _Overview_    
 This module uses the Saha equation to iterate until electron density converges. It does so over a range of temperatures with specified compositions of hydrogen, helium, carbon, nitrogen, and oxygen. It outputs a file containing the various ionization fractions, and the ionization energy, for each temperature. Due to the lack of partition function values for carbon, nitrogen, and oxygen, we only consider the zeroth, first, and second ionization levels.    
 _To compile_: gfortran -o saha_solver saha_solver_declarations.f90 saha_solver.f90    
 _Configuration_        
-To run an iteration with different concentrations of elements, the values in the “x” array can changed. The index-element pairs are 1-hydrogen, 2-helium, 3-carbon, 4-nitrogen, and 5-oxygen.  
+To run an iteration with different concentrations of elements, the values in the “x” array can be changed. The index-element pairs are 1-hydrogen, 2-helium, 3-carbon, 4-nitrogen, and 5-oxygen.  
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
 The density of the mixture can be changed by changing the value of the variable rho.  
 The initial electron density to start the iterations and the tolerance of the calculation can be changed, however their current values have worked well in our tests.    
@@ -15,7 +15,7 @@ The main thing that should be added here is determining the partition function v
 
 #saha_hydrogen_eos.f90 with saha_hydrogen_eos_declarations.f90
 _Overview_    
-While only considering hydrogen, this module uses the Saha equation to iterate until electron density converges. Once convergence is reached, the pressure, internal energy, and specific heat capacity are calculated and it does this over a range of temperatures. It outputs a file containing the ionization fraction, the pressure, the internal energy, and the specific heat capacity for each temperature.    
+While only considering hydrogen, this module uses the Saha equation to iterate until electron density converges. Once convergence is reached, the pressure, internal energy, and specific heat capacity are calculated. This is done over a range of temperatures. It outputs a file containing the ionization fraction, the pressure, the internal energy, and the specific heat capacity for each temperature.    
 _To compile_: gfortran -o saha_hydrogen_eos saha_hydrogen_eos_declarations.f90 saha_hydrogen_eos.f90     
 _Configuration_        
 The upper_T, lower_T, and increment_T values can be changed to iterate over different temperature ranges.   
