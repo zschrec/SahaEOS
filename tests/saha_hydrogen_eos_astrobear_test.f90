@@ -1,5 +1,3 @@
-! mpif90 -o saha_hydrogen_internal_energy saha_hydrogen_declarations.f90 saha_hydrogen_internal_energy.f90
-
 
 PROGRAM saha_hydrogen_eos_astrobear_test
 
