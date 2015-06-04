@@ -3,7 +3,7 @@
 ! Declarations file for stand alone solver modules
 !
 
-MODULE SahaHydrogenEOSDeclarations
+MODULE SahaHydrogenSpecificHeatEOSDeclarations
   IMPLICIT NONE
   SAVE
   PUBLIC
@@ -12,8 +12,9 @@ MODULE SahaHydrogenEOSDeclarations
   INTEGER, PARAMETER :: ikind=SELECTED_REAL_KIND(p=20)
   !number of elements to consider
   INTEGER, PARAMETER :: elements=1
-  !temperature to iterate over
-  INTEGER :: T
+  !initial temperature guess
+  REAL (KIND=ikind) :: T = 10.0
+  REAL (KIND=ikind) :: T_1 = 0.0
 
   !*************************************
   !*************************************
@@ -55,17 +56,20 @@ MODULE SahaHydrogenEOSDeclarations
   REAL (KIND=ikind), DIMENSION(1), PARAMETER :: X_h = (/ 2.1787e-11 /)
   ! partition functions
   REAL (KIND=ikind), DIMENSION(2), PARAMETER :: B_h = (/ 10.0**0.3, 10.0**0.0 /)
+  !electron density
+  REAL (KIND=ikind) :: N_e 
   !iteration variables
-  REAL (KIND=ikind) :: N_e = 1e20
-  REAL (KIND=ikind) :: N_e1 = 0
-  REAL (KIND=ikind), PARAMETER :: tol  = 1.0e-9
-  ! Kelvin
-  INTEGER (KIND=ikind), PARAMETER :: lower_T  = 100
-  INTEGER (KIND=ikind), PARAMETER :: upper_T  = 20000
-  INTEGER (KIND=ikind), PARAMETER :: increment_T  = 100
+  INTEGER :: U
+  REAL, PARAMETER :: tol  = 1.0e-6
+  ! CGS 
+  INTEGER, PARAMETER :: lower_U  = 10
+  INTEGER, PARAMETER :: upper_U  = 18000
+  INTEGER, PARAMETER :: increment_U = 10
+
 
   !record variables
-  REAL (KIND=ikind) :: N_e_initial, N_e_last
+  REAL (KIND=ikind) :: T_initial, T_last, T_error, T_temp
+  REAL (KIND=ikind), PARAMETER :: gain = 0.05
   !ionization degree array - hydrogen
   REAL (KIND=ikind), DIMENSION(1) :: y_h
   !ionization ratio - hydrogen
@@ -74,24 +78,24 @@ MODULE SahaHydrogenEOSDeclarations
 CONTAINS
 
       FUNCTION Pressure(ion_frac,T)
-        REAL(KIND=ikind) :: Pressure, ion_frac 
-        INTEGER  :: T
+        REAL (KIND=ikind) :: Pressure, ion_frac 
+        REAL (KIND=ikind) :: T
         Pressure=(1+ion_frac)*(k/m(1))*rho*T
       END FUNCTION Pressure
 
       FUNCTION InternalEnergy(ion_frac,T)
         REAL(KIND=ikind) :: InternalEnergy, ion_frac
-        INTEGER  :: T
+        REAL (KIND=ikind) :: T
         InternalEnergy=1.5*Pressure(ion_frac,T)+ion_frac*(X_h(1)/m(1))*rho
       END FUNCTION InternalEnergy
 
       FUNCTION SpecificHeatConstantVolume(ion_frac,T)
-        REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac, T
-        !INTEGER(KIND=SELECTED_INT_KIND(8)) :: T
+        REAL(KIND=ikind) :: SpecificHeatConstantVolume, ion_frac
+        REAL (KIND=ikind) :: T
         SpecificHeatConstantVolume=(k/m(1))*(1.5*(1.0+ion_frac) + &
               ((1.5+ (X_h(1)/(k*T)))**2.0)*((ion_frac*(1.0-ion_frac))/(2.0-ion_frac)))
       END FUNCTION SpecificHeatConstantVolume
 
 
-END MODULE SahaHydrogenEOSDeclarations
+END MODULE SahaHydrogenSpecificHeatEOSDeclarations
 

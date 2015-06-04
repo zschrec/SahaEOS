@@ -46,8 +46,8 @@ PROGRAM saha_hydrogen_eos
 
     ! Log temperature, ionization fraction, pressure, internal energy, and specific heat
     WRITE(10,*) T,' ', y_h(1), ' ', Pressure(y_h(1), T), ' ', &
-      InternalEnergy(y_h(1), T), ' ', SpecificHeatConstantVolume(y_h(1), T)
-          
+      InternalEnergy(y_h(1), T), ' ', SpecificHeatConstantVolume(y_h(1), 1.0*T), ' ', N_e
+    
   END DO
 
 END PROGRAM saha_hydrogen_eos
