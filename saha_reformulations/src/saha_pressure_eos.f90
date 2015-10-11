@@ -28,10 +28,13 @@ PROGRAM saha_pressure_eos
       A_h(1) = const * (2.0 * B_h(2) / B_h(1)) * (1.0*P)**(3.0/2.0)
       A_he(1) = const * (2.0 * B_he(2) / B_he(1)) * (1.0*P)**(3.0/2.0)
       A_he(2) = const * (2.0 * B_he(3) / B_he(2)) * (1.0*P)**(3.0/2.0)
+
       B_Ne = (SUM(n) + N_e)**(-3.0/2.0)
+      
       C_h_Ne(1) = EXP((-X_h(1)*(SUM(n) + N_e))/(1.0*P))
       C_he_Ne(1) = EXP((-X_he(1)*(SUM(n) + N_e))/(1.0*P))
       C_he_Ne(2) = EXP((-X_he(2)*(SUM(n) + N_e))/(1.0*P))
+      
       D_Ne = 1.0/N_e
 
       ratio_h(1) = A_h(1)*B_Ne*C_h_Ne(1)*D_Ne
@@ -50,12 +53,6 @@ PROGRAM saha_pressure_eos
           (dB_Ne*C_he_Ne(1)*D_Ne + B_Ne*(dC_he_Ne(1)*D_Ne + C_he_Ne(1)*dD_Ne))
       dratio_he(2) = A_he(2) * &
           (dB_Ne*C_he_Ne(2)*D_Ne + B_Ne*(dC_he_Ne(2)*D_Ne + C_he_Ne(2)*dD_Ne))
-
-
-      ! Calculate the Saha Equation for hydrogen 
-!      ratio_h(1) = const * (2.0 * B_h(2)/B_h(1)) * &
-!          ((1.0*P) / (n(1) + N_e))**(3.0/2.0) * &
-!          EXP((-X_h(1) * (n(1) + N_e) )/(1.0*P)) * (1.0/N_e) 
 
       ! Calculate the degree of ionization (aka ionization fraction)
       y_h(1) = 1.0 / ((1.0/ratio_h(1)) + 1.0)
@@ -78,13 +75,6 @@ PROGRAM saha_pressure_eos
         (dratio_he(1)*ratio_he(2) + ratio_he(1)*dratio_he(2))*(ratio_he(1)*ratio_he(2))**(-2.0)
 
       dN_e_he = -1.0*n(2)*y_he(1)**(2.0)*alpha - 2.0*n(2)*y_he(2)**(2.0) * beta 
-
-      !dN_e_he = n(2)*y_he(1)**(-2.0)* &
-      !  ((ratio_he(1))**(-2.0)*dratio_he(1) - dratio_he(2) ) + &
-      !  2.0*n(2)*(y_he(2))**(-2.0) * &
-      !  ((ratio_he(1)*ratio_he(2))**(-2.0)*(dratio_he(1)*ratio_he(2) + ratio_he(1)*dratio_he(2))+&
-      !    (ratio_he(2))**(-2.0)*dratio_he(2))
-
 
       G_N_e = N_e_h + N_e_he - N_e
       dG_N_e = dN_e_h + dN_e_he - 1.0
