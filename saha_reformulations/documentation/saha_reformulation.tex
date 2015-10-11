@@ -1,0 +1,146 @@
+
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+	\input{./title_reformulation.tex}
+	\newpage
+
+	\section{Saha Equation}
+		The general Saha equation is given by
+		\begin{equation} \label{eq:saha_general}
+			\frac{n^{r+1}_i}{n^r_i} = 
+				\left( \frac{2 \pi m_e k}{h^2} \right)^\frac{3}{2} T^\frac{3}{2} 
+				\frac{2 B^{r+1}_i exp\left(\frac{-\chi^r_i}{kT}\right)}{B^r_i N_e}
+		\end{equation}
+		where for element $i$ and ionization $r$. For ease of expression, we will take
+		\begin{equation} \label{eq:saha_constant}
+			M_{i^{r+1}} =	\left( \frac{2 \pi m_e}{h^2} \right)^\frac{3}{2}  
+				\frac{2 B^{r+1}_i}{B^r_i}
+		\end{equation}
+		So the Saha equation is re-expressed by
+		\begin{equation} \label{eq:saha_general_revised}
+			\frac{n^{r+1}_i}{n^r_i} = M_{i^{r+1}} (kT)^\frac{3}{2} 
+				exp\left(\frac{-\chi^r_i}{kT}\right) \frac{1}{N_e}
+		\end{equation}
+		This is the form we will manipulate throughout this document.
+	
+	\section{Pressure}
+		The general formula for pressure is given by
+		\begin{equation} \label{eq:pressure_general}
+			P = \left( \sum_i{n_i} + N_e \right) k T
+		\end{equation}
+		where $n_i$ is the number of atoms of element $i$. We can rearrange this to yield
+		\begin{equation} \label{eq:pressure_kT}
+			kT = \frac{P}{\left( \displaystyle \sum_i{n_i} + N_e \right)}
+		\end{equation}
+		as well as
+		\begin{equation} \label{eq:pressure_1_kT}
+			\frac{1}{kT} = \frac{\left( \displaystyle \sum_i{n_i} + N_e \right)}{P}
+		\end{equation}
+		We can substitute these into equation \ref{eq:saha_general_revised} which gives us
+		\begin{equation} \label{eq:saha_pressure}
+			\frac{n^{r+1}_i}{n^r_i} = M_{i^{r+1}} 
+				\left(\frac{P}{\left( \displaystyle \sum_i{n_i} + N_e \right)}\right)^\frac{3}{2} 
+				exp\left(\frac{-\chi^r_i}{P} \left(\displaystyle\sum_i{n_i} + N_e \right)\right)
+				\frac{1}{N_e}
+		\end{equation}
+		and our new "Saha constant" is 
+		\begin{equation} \label{eq:saha_constant_pressure}
+			A_{i^{r+1}} = M_{i^{r+1}} P^\frac{3}{2}
+		\end{equation}
+		The Saha equation using pressure, instead of temperature, is given by
+		\begin{equation} \label{eq:saha_pressure_revised}
+			\frac{n^{r+1}_i}{n^r_i} = A_{i^{r+1}} 
+			\left( \displaystyle \sum_i{n_i} + N_e \right)^{-\frac{3}{2}}
+				exp\left(\frac{-\chi^r_i}{P} \left(\displaystyle\sum_i{n_i} + N_e \right)\right)
+				N_e^{-1}
+		\end{equation}
+
+		\newpage
+		\subsection{Hydrogen}
+			Initially we will consider a mixture of pure hydrogen. The Saha equation becomes
+			\begin{equation} \label{eq:saha_pressure_revised_hydrogen}
+				\frac{n^1_H}{n^0_H} = A_{H^{1}} \left( n_H + N_e \right)^{-\frac{3}{2}}
+					exp\left(\frac{-\chi^0_H}{P} \left(n_H + N_e \right)\right) N_e^{-1}
+			\end{equation}
+			We will use the following to simplify our expression
+			\begin{equation} \label{eq:saha_pressure_s_H1}
+				s_{H^1} = \frac{n^1_H}{n^0_H}
+			\end{equation}
+			\begin{equation} \label{eq:saha_pressure_B_H_Ne}
+				B_H(N_e) = (n_H + N_e)^{-\frac{3}{2}}
+			\end{equation}
+			\begin{equation} \label{eq:saha_pressure_C_H1_Ne}
+				C_{H^1}(N_e) = exp\left(\frac{-\chi^0_H}{P} \left(n_H + N_e \right)\right) 
+			\end{equation}
+			\begin{equation} \label{eq:saha_pressure_D_H_Ne}
+				D_H(N_e) = N_e^{-1}
+			\end{equation}
+			Now
+			\begin{equation} \label{eq:saha_pressure_constants_hydrogen}
+				s_{H^1} = A_{H^{1}} B_H(N_e) C_{H^1}(N_e) D_H(N_e)
+			\end{equation}
+			Recall
+			\begin{equation} \label{eq:N_e_hydrogen}
+				N_{e} = n_h * \nu_e(H)
+			\end{equation}
+			where
+			\begin{equation} \label{eq:v_e_hydrogen}
+				\nu_e(H) = 1.0 * y_H^1
+			\end{equation}
+			and 
+			\begin{equation} \label{eq:ratio_H^1} 
+				y_H^1 = \frac{1}{\frac{1}{\frac{n_H^1}{n_H^0}}+1} = 
+						\left( s_{H^1}^{-1} + 1 \right)^{-1}
+			\end{equation}
+			Therefore
+			\begin{equation} \label{eq:N_e_ratio_H^1_hydrogen}
+				N_{e} = n_h * \left( s_{H^1}^{-1} + 1 \right)^{-1} \rightarrow
+				n_h * \left( s_{H^1}^{-1} + 1 \right)^{-1} - N_e = 0
+			\end{equation}
+			We will consider the function, $G(N_e)$ given by
+			\begin{equation} \label{eq:G(N_e)_hydrogen}
+				G(N_e) = n_h * \left( s_{H^1}^{-1} + 1 \right)^{-1} - N_e = 0
+			\end{equation}
+			To solve for $N_{e1}$ we will use Newton's Method, which is
+			\begin{equation} \label{eq:N_e1_hydrogen}
+				N_{e1} = N_e - \frac{G(N_e)}{G'(N_e)}
+			\end{equation}
+			We already have an expression for $G(N_e)$, so now we must find its derivative. We
+			have
+			\begin{equation} \label{eq:G'(N_e)_hydrogen}
+				G'(N_e) = - n_h * \left( s_{H^1}^{-1} + 1 \right)^{-2} 
+							\left[ s_{H^1}^{-1} + 1 \right]' - 1
+			\end{equation}
+			where
+			\begin{equation} 
+				\left[ s_{H^1}^{-1} + 1 \right]' = -s_{H^1}^{-2} \left[ s_{H^1} \right]' 
+			\end{equation}
+			Using equation \ref{eq:saha_pressure_constants_hydrogen}, we have
+			\begin{equation} \label{eq:saha_pressure_s'_H1}
+				\left[ s_{H^1} \right]' = A_{H^{1}} (B'_H(N_e) C_{H^1}(N_e) D_H(N_e) + 
+					B_H(N_e) ( C'_{H^1}(N_e) D_H(N_e) + C_{H^1}(N_e) D'_H(N_e) ) )
+			\end{equation}
+			All we need now is to differentiate our 'saha constants' and substitute them into
+			equation \ref{eq:saha_pressure_s'_H1}. Therefore
+			\begin{equation} \label{eq:saha_pressure_B'_H_Ne}
+				B'_H(N_e) = (n_H + N_e)^{-\frac{3}{2}}
+			\end{equation}
+			\begin{equation} \label{eq:saha_pressure_C'_H1_Ne}
+				C'_{H^1}(N_e) = exp\left(\frac{-\chi^0_H}{P} \left(n_H + N_e \right)\right) 
+			\end{equation}
+			\begin{equation} \label{eq:saha_pressure_D'_H_Ne}
+				D'_H(N_e) = N_e^{-1}
+			\end{equation}
+
+
+
+
+
+
+
+\end{document}
